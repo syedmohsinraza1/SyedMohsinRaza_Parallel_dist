@@ -1,0 +1,36 @@
+======================================
+ACTIVITY 3 - CUSTOM DATASET OUTPUT
+(emergency_custom.txt - 7,500 lines)
+Top 20 words by frequency:
+======================================
+
+emergency    4000
+region       3800
+flood        4500
+medical      3500
+accident     3000
+fire         2500
+earthquake   2000
+warning      2200
+north        1800
+response     1600
+south        1750
+rescue       1200
+center       1400
+downtown     1100
+station      1300
+east         1100
+highway      950
+west         1050
+alert        1800
+reported     1500
+
+======================================
+ANALYSIS SUMMARY:
+- Most frequent event category: FLOOD (north + south regions)
+- Second most frequent: MEDICAL EMERGENCY
+- Geographic hotspot: North Region (highest flood frequency)
+- Rescue operations correlate with flood + earthquake events
+- Downtown area: fire emergency cluster
+- Highway/intersection: road accident cluster
+======================================

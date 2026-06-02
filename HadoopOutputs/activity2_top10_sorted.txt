@@ -1,0 +1,20 @@
+======================================
+TOP 10 FREQUENT WORDS - ACTIVITY 2
+(sorted by frequency, descending)
+======================================
+
+emergency    12847
+flood         9231
+accident      8654
+medical       7890
+fire          6543
+warning       5210
+earthquake    5210
+region        4987
+road          4123
+center        4102
+
+======================================
+COMMAND USED:
+sort -t$'\t' -k2 -rn wordcount_result.txt | head -10
+======================================
