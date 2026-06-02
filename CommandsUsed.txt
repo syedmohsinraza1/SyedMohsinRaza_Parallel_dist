@@ -1,0 +1,113 @@
+====================================================
+INDRAS – HADOOP COMMANDS USED
+Parallel and Distributed Computing Lab – Final Term
+====================================================
+
+====================================================
+SETUP – START HADOOP SERVICES
+====================================================
+# Windows Hadoop
+start-dfs.cmd
+start-yarn.cmd
+
+# Verify services
+jps
+# Expected: NameNode, DataNode, ResourceManager, NodeManager, SecondaryNameNode
+
+# Check HDFS health
+hadoop fsck /
+
+====================================================
+ACTIVITY 1 – WORD FREQUENCY ANALYSIS
+====================================================
+# Create HDFS directory structure
+hadoop fs -mkdir -p /user/indras/input
+
+# Upload dataset to HDFS
+hadoop fs -put emergency_events.txt /user/indras/input/
+
+# Verify upload
+hadoop fs -ls /user/indras/input/
+
+# Run WordCount MapReduce job
+hadoop jar %HADOOP_HOME%\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.3.6.jar ^
+    wordcount /user/indras/input /user/indras/output1
+
+# View output
+hadoop fs -cat /user/indras/output1/part-r-00000
+
+# Check job status
+yarn application -list -appStates ALL
+
+====================================================
+ACTIVITY 2 – TOP FREQUENT WORDS PROCESSING
+====================================================
+# Run WordCount on same input
+hadoop jar %HADOOP_HOME%\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.3.6.jar ^
+    wordcount /user/indras/input /user/indras/output2
+
+# Export/merge result files to local filesystem
+hadoop fs -getmerge /user/indras/output2 wordcount_result.txt
+
+# Verify local file created
+dir wordcount_result.txt
+
+# Sort by frequency (descending) – Linux/Git Bash:
+sort -t$'\t' -k2 -rn wordcount_result.txt | head -10
+
+# Sort by frequency (descending) – Windows CMD:
+# (Use PowerShell alternative below)
+powershell "Get-Content wordcount_result.txt | Sort-Object {[int]($_ -split '\t')[1]} -Descending | Select-Object -First 10"
+
+# Display count of unique words
+wc -l wordcount_result.txt
+
+====================================================
+ACTIVITY 3 – CUSTOM DATASET ANALYTICS
+====================================================
+# Generate custom dataset (Python script)
+python generate_dataset.py > emergency_custom.txt
+
+# Check dataset size
+wc -l emergency_custom.txt
+
+# Create separate HDFS directory for custom data
+hadoop fs -mkdir /user/indras/input/custom
+
+# Upload custom dataset
+hadoop fs -put emergency_custom.txt /user/indras/input/custom/
+
+# Run WordCount on custom dataset
+hadoop jar %HADOOP_HOME%\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.3.6.jar ^
+    wordcount /user/indras/input/custom /user/indras/output3
+
+# Retrieve and sort results
+hadoop fs -getmerge /user/indras/output3 custom_result.txt
+sort -t$'\t' -k2 -rn custom_result.txt | head -20
+
+# Count total unique words
+wc -l custom_result.txt
+
+# View HDFS disk usage
+hadoop fs -du -h /user/indras/
+
+====================================================
+UTILITY COMMANDS
+====================================================
+# List all HDFS output directories
+hadoop fs -ls /user/indras/
+
+# Remove output directory (before re-running same job)
+hadoop fs -rm -r /user/indras/output1
+hadoop fs -rm -r /user/indras/output2
+hadoop fs -rm -r /user/indras/output3
+
+# View YARN job history
+mapred job -history /user/indras/output1
+
+# Check HDFS replication
+hadoop fs -stat %r /user/indras/input/emergency_events.txt
+
+# Stop Hadoop services
+stop-dfs.cmd
+stop-yarn.cmd
